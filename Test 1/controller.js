@@ -1,7 +1,6 @@
 
 // This is where your state machines and game logic lives
 
-
 class Controller {
 
     // This is the state we start with.
@@ -13,8 +12,6 @@ class Controller {
     update() {
 
         // STATE MACHINE ////////////////////////////////////////////////
-        // This is where your game logic lives
-        /////////////////////////////////////////////////////////////////
         switch(this.gameState) {
 
             // This is the main game state, where the playing actually happens
@@ -26,23 +23,18 @@ class Controller {
                 // show all players in the right place, by adding them to display buffer
                 display.setPixel(playerOne.position, playerOne.playerColor);
                 display.setPixel(playerTwo.position, playerTwo.playerColor);
-                
-                
-                // now add the target
-                display.setPixel(target.position, target.playerColor);
 
-                
                 // check if player has caught target
-                if (playerOne.position == target.position)  {
-                    playerOne.score++;              // increment score
-                    this.gameState = "COLLISION";   // go to COLLISION state
-                }
+                //if (playerOne.position == target.position)  {
+                //    playerOne.score++;              // increment score
+                //    this.gameState = "COLLISION";   // go to COLLISION state
+                //}
                 
                 // check if other player has caught target        
-                if (playerTwo.position == target.position)  {
-                    playerTwo.score++;              // increment their score
-                    this.gameState = "COLLISION";   // go to COLLISION state
-                }
+                //if (playerTwo.position == target.position)  {
+                //    playerTwo.score++;              // increment their score
+                //    this.gameState = "COLLISION";   // go to COLLISION state
+                //}
 
                 break;
 
@@ -73,32 +65,32 @@ class Controller {
                     } else if (playerTwo.score >= score.max) {
                         score.winner = playerTwo.playerColor;   // store winning color in score.winner
                         this.gameState = "SCORE";               // go to state that displays score
-
-                    // We haven't hit the max score yet, keep playing    
-                    } else {
-                        target.position = parseInt(random(0,displaySize));  // move the target to a new random position
-                        this.gameState = "PLAY";    // back to play state
                     }
+                    // We haven't hit the max score yet, keep playing    
+                    //} else {
+                    //    target.position = parseInt(random(0,displaySize));  // move the target to a new random position
+                    //    this.gameState = "PLAY";    // back to play state
+                    //}
                 } 
 
                 break;
 
             // Game is over. Show winner and clean everything up so we can start a new game.
-            case "SCORE":       
+            // case "SCORE":       
             
-                // reset everyone's score
-                playerOne.score = 0;
-                playerTwo.score = 0;
+            //     // reset everyone's score
+            //     playerOne.score = 0;
+            //     playerTwo.score = 0;
 
-                // put the target somewhere else, so we don't restart the game with player and target in the same place
-                target.position = parseInt(random(1,displaySize));
+            //     // put the target somewhere else, so we don't restart the game with player and target in the same place
+            //     target.position = parseInt(random(1,displaySize));
 
-                //light up w/ winner color by populating all pixels in buffer with their color
-                display.setAllPixels(score.winner);                    
+            //     //light up w/ winner color by populating all pixels in buffer with their color
+            //     display.setAllPixels(score.winner);                    
 
-                break;
+            //     break;
 
-            // Not used, it's here just for code compliance
+            // // Not used, it's here just for code compliance
             default:
                 break;
         }
@@ -106,9 +98,6 @@ class Controller {
 }
 
 
-
-
-// This function gets called when a key on the keyboard is pressed
 function keyPressed() {
 
     // Move player one to the left if letter A is pressed
@@ -127,6 +116,10 @@ function keyPressed() {
     
     if (key == 'L' || key == 'l') {
     playerTwo.move(1);
+    }
+
+    if (key == 'H' || key == 'h') {
+    playerOne.hide(color(220, 220, 220));
     }
     
     // When you press the letter R, the game resets back to the play state
