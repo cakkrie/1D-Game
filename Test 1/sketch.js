@@ -1,5 +1,6 @@
 let displaySize = 50;   // how many pixels are visible in the game
 let pixelSize = 20;     // how big each 'pixel' looks on screen
+let BG = 235;
 
 let playerOne;    // Adding 2 players to the game
 let playerTwo;
@@ -24,9 +25,15 @@ function setup() {
   }
   
   function draw() {
-    background(220,220,220);
+    background(235,235,235);
     controller.update(); // 更新游戏状态
-    
     display.show(); // 显示当前的像素
+    if (playerTwo.isExploding) {
+        playerTwo.explode(color(255, 0, 0));  // Explode in red color
+    } else {
+        // Show Player Two normally when not exploding
+        display.setPixel(playerTwo.position, playerTwo.playerColor);
+    }
+
   }
   

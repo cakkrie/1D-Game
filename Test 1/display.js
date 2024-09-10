@@ -4,7 +4,7 @@ class Display {
   
       this.displaySize = _displaySize;
       this.pixelSize = _pixelSize;
-      this.initColor = color(220, 220, 220);      // black color
+      this.initColor = color(235, 235, 235);     
       this.displayBuffer = [];
 
       // Assign black to all pixels. Black = off
