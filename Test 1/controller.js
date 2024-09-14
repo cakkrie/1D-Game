@@ -5,8 +5,8 @@ class Controller {
       this.lastDropTime = 0;
       this.hideStartTime = 0;
       this.isHidden = false;
-      this.flashStartTime = 0; // Start time of flashing effect
-      this.flashDuration = 1500; // Duration of flashing effect in milliseconds
+      this.flashStartTime = 0; 
+      this.flashDuration = 1500; // Duration of flashing effect in 1.5s
       this.flashColor = color(234, 101, 101); 
       this.score = 0;
       this.goldColor = color(255, 208, 90);
@@ -81,7 +81,10 @@ class Controller {
               // Check for collision between Player One and Player Two
               if (playerOne.position === playerTwo.position) {
                 if (!this.isHidden) {
-                    this.startFlash(); // Start flashing effect if Player One is not hidden
+                    // Record start time of flashing effect
+                    this.flashStartTime = millis(); 
+                    this.gameState = "GAME_OVER"; 
+
                     this.endGame(); // End game if Player One is not hidden
                 }
             }
@@ -92,44 +95,30 @@ class Controller {
               // Handle flashing red effect
               let flashTime = currentTime - this.flashStartTime;
               if (flashTime < this.flashDuration) {
-                  display.setAllPixels(this.flashColor); // Flash red
+                  // Calculate the flashing color
+                  let lerpValue = (flashTime % 500) / 500; // Flash on and off every 500 ms
+                  let flashingColor = lerpColor(this.flashColor, color(BG, BG, BG), lerpValue);
+                  display.setAllPixels(flashingColor); // Flash red
               } else {
                   this.gameState = "SCORE"; // Go to SCORE state after flashing
               }
             break;
 
             case "SCORE":
-                this.displayScore(); // Show the score on the screen
-                break;
+                let score_number = 0; 
+                for (let i = 0; i < this.score; i++) {
+                    // Draw each block for the score
+                    display.setPixel(score_number, this.goldColor);
+                    score_number=score_number + 2;
 
+                      if (score_number >= displaySize) {
+                        score_number = displaySize;
+                    }
+                }
+                break;
       }
   }
-    displayScore(){
-        let xOffset = 0; // X position offset for blocks
-        let yOffset = 0; // Y position offset for blocks
-        let blockSpacing = 1; // Spacing between blocks
   
-        for (let i = 0; i < this.score; i++) {
-            // Draw each block for the score
-            display.setPixel(xOffset, yOffset, this.goldColor);
-  
-            // Update xOffset for the next block
-            xOffset += this.pixelSize + blockSpacing;
-  
-            // Move to the next line if blocks exceed the display width
-            if (xOffset >= width) {
-                xOffset = 0;
-                yOffset += this.pixelSize + blockSpacing;
-            }
-        }
-    }
-
-  
-    startFlash() {
-        this.flashStartTime = millis(); // Record start time of flashing effect
-        this.gameState = "GAME_OVER"; // Change game state to GAME_OVER
-    }
-
     endGame() {
         // Reset positions, scores, and state for a new game
         playerOne.position = parseInt(random(0, displaySize)); // Reset Player One's position
@@ -173,8 +162,8 @@ function keyPressed() {
 
   if (key == 'R' || key == 'r') {
     if (controller.gameState === "GAME_OVER") {
-        controller.restartGame(); // Restart the game when 'R' is pressed
+        controller.restartGame(); 
       }
-    controller.restartGame(); // Restart the game when 'R' is pressed
+    controller.restartGame(); 
   }
 }

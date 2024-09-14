@@ -3,7 +3,6 @@ class PlayerOne {
     constructor(_color, _position, _displaySize) {
         this.playerColor = _color;
         this.position = _position;
-        this.score = 0;
         this.displaySize = _displaySize;
     }
 
@@ -27,7 +26,6 @@ class PlayerTwo {
     constructor(_color, _position, _displaySize) {
         this.playerColor = _color;
         this.position = _position;
-        this.score = 0;
         this.displaySize = _displaySize;
         this.isExploding = false; 
         this.explosionSize = 1;  // Default explosion size
