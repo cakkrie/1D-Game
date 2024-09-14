@@ -25,7 +25,8 @@ function draw() {
     background(BG,BG,BG);
     controller.update();
     display.show();
-    if (playerTwo.isExploding) {
-        playerTwo.explode();  // Run explosion animation when Player 2 is exploding
+    if (controller.gameState === "GAME_OVER") {
+        // This will handle flashing red effect
+        display.show();
     }
 }

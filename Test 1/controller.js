@@ -5,6 +5,9 @@ class Controller {
       this.lastDropTime = 0;
       this.hideStartTime = 0;
       this.isHidden = false;
+      this.flashStartTime = 0; // Start time of flashing effect
+      this.flashDuration = 2000; // Duration of flashing effect in milliseconds
+      this.flashColor = color(234, 101, 101); // Red color for flashing
   }
 
   update() {
@@ -25,7 +28,6 @@ class Controller {
                   display.setPixel(playerOne.position, playerOne.playerColor);
               }
 
-              // 检查 playerTwo 是否正在爆炸
               if (playerTwo.isExploding) {
                   playerTwo.explode();
               }
@@ -60,9 +62,27 @@ class Controller {
                   golds = golds.filter(pos => pos !== playerOne.position); // 玩家1碰到gold后移除
               }
 
+              // Check for collision between Player One and Player Two
+              if (playerOne.position === playerTwo.position) {
+                if (!this.isHidden) {
+                    this.startFlash(); // Start flashing effect if Player One is not hidden
+                    this.endGame(); // End game if Player One is not hidden
+                }
+            }
+
+            break;
+
+            case "GAME_OVER":
+              // Handle flashing red effect
+              let flashTime = currentTime - this.flashStartTime;
+              if (flashTime < this.flashDuration) {
+                  display.setAllPixels(this.flashColor); // Flash red
+              } else {
+                  this.gameState = "SCORE"; // Go to SCORE state after flashing
+              }
               break;
 
-              case "SCORE":       
+            case "SCORE":       
             
                 // reset everyone's score
                 playerOne.score = 0;
@@ -74,14 +94,29 @@ class Controller {
                 //light up w/ winner color by populating all pixels in buffer with their color
                 display.setAllPixels(score.winner);                    
 
-                break;
+            break;
       }
   }
 
-  endGame() {
-      this.gameState = "GAME_OVER";
-      console.log("游戏结束");
-  }
+  
+    startFlash() {
+        this.flashStartTime = millis(); // Record start time of flashing effect
+        this.gameState = "GAME_OVER"; // Change game state to GAME_OVER
+    }
+
+    endGame() {
+        // Reset positions, scores, and state for a new game
+        playerOne.position = parseInt(random(0, displaySize)); // Reset Player One's position
+        playerTwo.position = parseInt(random(0, displaySize)); // Reset Player Two's position
+        golds = []; // Clear golds
+        rocks = []; // Clear rocks
+        this.hideStartTime = millis(); // Optionally reset hide start time if needed
+    }
+
+    restartGame() {
+        this.gameState = "PLAY"; // Set game state to PLAY
+        this.endGame(); // Reset game state and positions
+    }
 }
 
 function keyPressed() {
@@ -108,5 +143,12 @@ function keyPressed() {
   
   if (key == 'O' || key == 'o') {
     playerTwo.startExplosion(); 
+  }
+
+  if (key == 'R' || key == 'r') {
+    if (controller.gameState === "GAME_OVER") {
+        controller.restartGame(); // Restart the game when 'R' is pressed
+      }
+    controller.restartGame(); // Restart the game when 'R' is pressed
   }
 }

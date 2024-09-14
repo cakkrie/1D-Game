@@ -29,7 +29,7 @@ class PlayerTwo {
         this.position = _position;
         this.score = 0;
         this.displaySize = _displaySize;
-        this.isExploding = false;  // Set initially to false
+        this.isExploding = false; 
         this.explosionSize = 1;  // Default explosion size
         this.explosionStartTime = 0;  // Record explosion start time
         this.flashColor = false; // Used for flashing effect
@@ -86,10 +86,13 @@ class PlayerTwo {
             display.setPixel(leftPos, explosionColor);
             display.setPixel(rightPos, explosionColor);
 
-            // 检查是否与 gold 重叠 (Check if explosion hits gold)
-            golds = golds.filter(pos => pos !== leftPos && pos !== rightPos);
+            // Remove rocks at explosion positions
+            rocks = rocks.filter(pos => pos !== leftPos && pos !== rightPos && pos !== this.position);
 
-            // 检查是否与 playerOne 重叠 (Check if explosion hits playerOne)
+            // Remove gold at explosion positions
+            golds = golds.filter(pos => pos !== leftPos && pos !== rightPos && pos !== this.position);
+
+            // Check if explosion hits playerOne and let playerOne die once the explode hit it
             if (playerOne.position === leftPos || playerOne.position === rightPos || playerOne.position === this.position) {
                 controller.endGame();  // End game if PlayerOne hits the explosion
             }
