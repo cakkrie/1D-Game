@@ -61,6 +61,20 @@ class Controller {
               }
 
               break;
+
+              case "SCORE":       
+            
+                // reset everyone's score
+                playerOne.score = 0;
+                playerTwo.score = 0;
+
+                // put the target somewhere else, so we don't restart the game with player and target in the same place
+                target.position = parseInt(random(1,displaySize));
+
+                //light up w/ winner color by populating all pixels in buffer with their color
+                display.setAllPixels(score.winner);                    
+
+                break;
       }
   }
 
@@ -92,12 +106,7 @@ function keyPressed() {
       controller.isHidden = true;
   }
   
-  if (key == 'O') {
-      // 检查 playerTwo 是否与 rock 重合
-      rocks.forEach(rockPos => {
-          if (playerTwo.position === rockPos) {
-              playerTwo.startExplosion(rockPos);  // 引爆rock
-          }
-      });
+  if (key == 'O' || key == 'o') {
+    playerTwo.startExplosion(); 
   }
 }

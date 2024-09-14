@@ -22,7 +22,10 @@ function setup() {
 }
 
 function draw() {
-    background(235,235,235);
+    background(BG,BG,BG);
     controller.update();
     display.show();
+    if (playerTwo.isExploding) {
+        playerTwo.explode();  // Run explosion animation when Player 2 is exploding
+    }
 }
