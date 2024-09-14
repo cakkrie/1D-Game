@@ -6,8 +6,11 @@ class Controller {
       this.hideStartTime = 0;
       this.isHidden = false;
       this.flashStartTime = 0; // Start time of flashing effect
-      this.flashDuration = 2000; // Duration of flashing effect in milliseconds
-      this.flashColor = color(234, 101, 101); // Red color for flashing
+      this.flashDuration = 1500; // Duration of flashing effect in milliseconds
+      this.flashColor = color(234, 101, 101); 
+      this.score = 0;
+      this.goldColor = color(255, 208, 90);
+      this.rockColor = color(100, 100, 100);
   }
 
   update() {
@@ -32,7 +35,7 @@ class Controller {
                   playerTwo.explode();
               }
 
-              // 检查是否生成新的 gold 和 rock
+              // check if need to have new gold or rock
               if (currentTime - this.lastDropTime > 2000) {
                   let newGoldPos = parseInt(random(0, displaySize));
                   let newRockPos = parseInt(random(0, displaySize));
@@ -52,15 +55,28 @@ class Controller {
               }
 
               golds.forEach(pos => {
-                  display.setPixel(pos, color(255, 208, 90));  
+                  display.setPixel(pos, this.goldColor);  
               });
               rocks.forEach(pos => {
-                  display.setPixel(pos, color(100, 100, 100)); 
+                  display.setPixel(pos, this.rockColor); 
               });
 
               if (golds.includes(playerOne.position)) {
-                  golds = golds.filter(pos => pos !== playerOne.position); // 玩家1碰到gold后移除
+                  golds = golds.filter(pos => pos !== playerOne.position); // remove gold when player 1 meet gold
+                  this.score++;
               }
+
+              // Check if Player Two explodes a rock
+              rocks.forEach((rock, index) => {
+                if (playerTwo.isExploding) {
+                    // Check if the explosion hits the rock
+                    let rockPos = rock;
+                    if (playerTwo.position === rockPos) {
+                        rocks.splice(index, 1); // Remove rock
+                        this.score++; // Increment score for Player Two exploding a rock
+                    }
+                }
+            });
 
               // Check for collision between Player One and Player Two
               if (playerOne.position === playerTwo.position) {
@@ -80,23 +96,33 @@ class Controller {
               } else {
                   this.gameState = "SCORE"; // Go to SCORE state after flashing
               }
-              break;
-
-            case "SCORE":       
-            
-                // reset everyone's score
-                playerOne.score = 0;
-                playerTwo.score = 0;
-
-                // put the target somewhere else, so we don't restart the game with player and target in the same place
-                target.position = parseInt(random(1,displaySize));
-
-                //light up w/ winner color by populating all pixels in buffer with their color
-                display.setAllPixels(score.winner);                    
-
             break;
+
+            case "SCORE":
+                this.displayScore(); // Show the score on the screen
+                break;
+
       }
   }
+    displayScore(){
+        let xOffset = 0; // X position offset for blocks
+        let yOffset = 0; // Y position offset for blocks
+        let blockSpacing = 1; // Spacing between blocks
+  
+        for (let i = 0; i < this.score; i++) {
+            // Draw each block for the score
+            display.setPixel(xOffset, yOffset, this.goldColor);
+  
+            // Update xOffset for the next block
+            xOffset += this.pixelSize + blockSpacing;
+  
+            // Move to the next line if blocks exceed the display width
+            if (xOffset >= width) {
+                xOffset = 0;
+                yOffset += this.pixelSize + blockSpacing;
+            }
+        }
+    }
 
   
     startFlash() {

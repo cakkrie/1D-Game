@@ -39,8 +39,6 @@ class Display {
       }
     }
 
-
-    
     // Let's empty the display before we start adding things to it again
     clear() {
 
