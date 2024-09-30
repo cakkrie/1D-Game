@@ -9,13 +9,33 @@ class Controller {
       this.flashDuration = 1500; // Duration of flashing effect in 1.5s
       this.flashColor = color(234, 101, 101); 
       this.score = 0;
-      this.goldColor = color(255, 208, 90);
+      this.goldColor = color(255, 182, 0);
       this.rockColor = color(100, 100, 100);
+      this.xPressCount = 0; // Count how many times 'x' is pressed
+      this.targetFadeColor = color(235, 235, 235); // Color to fade
+      this.fadeDuration = 60000; // 60 seconds in milliseconds
   }
 
   update() {
-      let currentTime = millis();
-      display.clear();
+
+    let currentTime = millis();
+    let elapsedTime = currentTime - this.startTime;
+    let fadeProgress = constrain(elapsedTime / this.fadeDuration, 0, 0.8); // 0 to 1 over 60 seconds
+
+    // Gradually fade each color to the target fade color
+    let fadedGoldColor = lerpColor(this.goldColor, this.targetFadeColor, fadeProgress);
+    let fadedRockColor = lerpColor(this.rockColor, this.targetFadeColor, fadeProgress);
+    let fadedPlayerOneColor = lerpColor(playerOne.playerColor, this.targetFadeColor, fadeProgress);
+    let fadedPlayerTwoColor = lerpColor(playerTwo.playerColor, this.targetFadeColor, fadeProgress);
+    let keys = {};
+
+
+    display.clear();
+
+    // Check if the colors have fully faded (i.e., fadeProgress reaches 1)
+    if (fadeProgress >= 0.8) {
+        this.gameState = "SCORE"; // Go to SCORE state after flashing
+    }
 
       switch (this.gameState) {
           case "PLAY":
@@ -25,10 +45,10 @@ class Controller {
                   }
               }
 
-              display.setPixel(playerTwo.position, playerTwo.playerColor);
+              display.setPixel(playerTwo.position,fadedPlayerTwoColor);
 
               if (!this.isHidden) {
-                  display.setPixel(playerOne.position, playerOne.playerColor);
+                  display.setPixel(playerOne.position, fadedPlayerOneColor);
               }
 
               if (playerTwo.isExploding) {
@@ -36,7 +56,7 @@ class Controller {
               }
 
               // check if need to have new gold or rock
-              if (currentTime - this.lastDropTime > 2000) {
+              if (currentTime - this.lastDropTime > 4000) {
                   let newGoldPos = parseInt(random(0, displaySize));
                   let newRockPos = parseInt(random(0, displaySize));
 
@@ -54,17 +74,18 @@ class Controller {
                   this.lastDropTime = currentTime;
               }
 
-              golds.forEach(pos => {
-                  display.setPixel(pos, this.goldColor);  
-              });
-              rocks.forEach(pos => {
-                  display.setPixel(pos, this.rockColor); 
-              });
+            // Display golds and rocks with gradually fading colors
+            golds.forEach(pos => {
+                display.setPixel(pos, fadedGoldColor);
+            });
 
-              if (golds.includes(playerOne.position)) {
-                  golds = golds.filter(pos => pos !== playerOne.position); // remove gold when player 1 meet gold
-                  this.score++;
-              }
+            rocks.forEach(pos => {
+                display.setPixel(pos, fadedRockColor);
+            });
+
+            // if (playerOne.minegoldcondition = true) {
+            //       this.score++;
+            // }
 
               // Check if Player Two explodes a rock
               rocks.forEach((rock, index) => {
@@ -105,20 +126,16 @@ class Controller {
             break;
 
             case "SCORE":
-                let score_number = 0; 
-                for (let i = 0; i < this.score; i++) {
-                    // Draw each block for the score
-                    display.setPixel(score_number, this.goldColor);
-                    score_number=score_number + 2;
-
-                      if (score_number >= displaySize) {
-                        score_number = displaySize;
-                    }
-                }
-                break;
+            let scorePos = 0;
+            // Display the combined score as a series of blocks
+            for (let i = 0; i < this.score; i++) {
+                display.setPixel(scorePos, this.goldColor);
+                scorePos += 2; // Move to the next pixel locationa
+        }
+        break;
       }
   }
-  
+
     endGame() {
         // Reset positions, scores, and state for a new game
         playerOne.position = parseInt(random(0, displaySize)); // Reset Player One's position
@@ -134,36 +151,43 @@ class Controller {
     }
 }
 
+
 function keyPressed() {
-  if (key == 'A' || key == 'a') {
-      playerOne.move(-1);
-  }
-
-  if (key == 'D' || key == 'd') {
-      playerOne.move(1);
-  }
-
-  if (key == 'J' || key == 'j') {
-      playerTwo.move(-1);
-  }
-
-  if (key == 'L' || key == 'l') {
-      playerTwo.move(1);
-  }
-
-  if (key == 'H' || key == 'h') {
-      controller.hideStartTime = millis();
-      controller.isHidden = true;
-  }
+    
+    if (key == 'A' || key == 'a') {
+        playerOne.move(-1);
+    }
   
-  if (key == 'O' || key == 'o') {
-    playerTwo.startExplosion(); 
+    if (key == 'D' || key == 'd') {
+        playerOne.move(1);
+    }
+  
+    if (key == 'J' || key == 'j') {
+        playerTwo.move(-1);
+    }
+  
+    if (key == 'L' || key == 'l') {
+        playerTwo.move(1);
+    }
+  
+    if (key == 'H' || key == 'h') {
+        controller.hideStartTime = millis();
+        controller.isHidden = true;
+    }
+    
+    if (key == 'O' || key == 'o') {
+        playerTwo.startExplosion(); 
+    }
+  
+    if (key == 'B' || key == 'b') {
+        // Increment the press count and enable the feature after 3 presses
+        playerOne.mineGold()
+    }
+  
+    if (key == 'R' || key == 'r') {
+      if (controller.gameState === "GAME_OVER") {
+          controller.restartGame(); 
+        }
+      controller.restartGame(); 
+    }
   }
-
-  if (key == 'R' || key == 'r') {
-    if (controller.gameState === "GAME_OVER") {
-        controller.restartGame(); 
-      }
-    controller.restartGame(); 
-  }
-}

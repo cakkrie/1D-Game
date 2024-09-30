@@ -4,6 +4,8 @@ class PlayerOne {
         this.playerColor = _color;
         this.position = _position;
         this.displaySize = _displaySize;
+        this.miningCount = 0;
+        this.minegoldcondition = false;
     }
 
     move(_direction) {
@@ -19,6 +21,27 @@ class PlayerOne {
             this.position = nextPosition;
         }
     } 
+
+    mineGold() {
+        // Check if player is at a position adjacent to any gold
+        for (let i = 0; i < golds.length; i++) {
+            if (this.position === golds[i] - 1 || this.position === golds[i] + 1 || this.position === golds[i]) {
+                if (key === 'B' || key === 'b') {
+                    this.miningCount++; // Increment the mining count each time 'B' is pressed
+                }
+                if (this.miningCount === 3) {
+                    // Mine the gold and give one point
+                    golds.splice(i, 1); // Remove the gold from the array
+                    controller.score++;  // Increment the score
+                    this.miningCount = 0; // Reset the mining count after successful mining
+                    this.minegoldcondition = true;
+                    break; // Exit loop after mining the gold
+                }
+            } else {
+                this.minegoldcondition = false;
+            }
+        }
+    }
 }
 
 class PlayerTwo {
