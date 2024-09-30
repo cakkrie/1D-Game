@@ -13,14 +13,14 @@ class Controller {
       this.rockColor = color(100, 100, 100);
       this.xPressCount = 0; // Count how many times 'x' is pressed
       this.targetFadeColor = color(235, 235, 235); // Color to fade
-      this.fadeDuration = 60000; // 60 seconds in milliseconds
+      this.fadeDuration =  10000; // 60 seconds in milliseconds
   }
 
   update() {
 
     let currentTime = millis();
     let elapsedTime = currentTime - this.startTime;
-    let fadeProgress = constrain(elapsedTime / this.fadeDuration, 0, 0.8); // 0 to 1 over 60 seconds
+    let fadeProgress = constrain(elapsedTime / this.fadeDuration, 0, 0); // 0 to 1 over 60 seconds
 
     // Gradually fade each color to the target fade color
     let fadedGoldColor = lerpColor(this.goldColor, this.targetFadeColor, fadeProgress);
@@ -82,10 +82,6 @@ class Controller {
             rocks.forEach(pos => {
                 display.setPixel(pos, fadedRockColor);
             });
-
-            // if (playerOne.minegoldcondition = true) {
-            //       this.score++;
-            // }
 
               // Check if Player Two explodes a rock
               rocks.forEach((rock, index) => {
