@@ -21,8 +21,7 @@ class Display {
   
 
     // Color all pixels in the buffer
-    setAllPixels( _color) {
-      
+    setAllPixels( _color) { 
       for(let i = 0; i < displaySize; i++) { 
         display.setPixel(i, _color); 
       }

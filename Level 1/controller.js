@@ -39,6 +39,16 @@ class Controller {
 
       switch (this.gameState) {
           case "PLAY":
+
+            // Display golds and rocks with gradually fading colors
+                golds.forEach(pos => {
+                    display.setPixel(pos, fadedGoldColor);
+                });
+        
+                rocks.forEach(pos => {
+                     display.setPixel(pos, fadedRockColor);
+                });
+                
               if (this.isHidden) {
                   if (currentTime - this.hideStartTime >= 1000) {
                       this.isHidden = false;
@@ -64,24 +74,17 @@ class Controller {
                       newRockPos = parseInt(random(0, displaySize));
                   }
 
-                  if (golds.length < 10) {
+                  if (golds.length < 6) {
                       golds.push(newGoldPos);      
                   }
-                  if (rocks.length < 10) {
+                  if (rocks.length < 6) {
                       rocks.push(newRockPos);
                   }
 
                   this.lastDropTime = currentTime;
               }
 
-            // Display golds and rocks with gradually fading colors
-            golds.forEach(pos => {
-                display.setPixel(pos, fadedGoldColor);
-            });
 
-            rocks.forEach(pos => {
-                display.setPixel(pos, fadedRockColor);
-            });
 
               // Check if Player Two explodes a rock
               rocks.forEach((rock, index) => {
