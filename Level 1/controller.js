@@ -61,8 +61,6 @@ class Controller {
     let fadedRockColor = lerpColor(this.rockColor, this.targetFadeColor, fadeProgress);
     let fadedPlayerOneColor = lerpColor(playerOne.playerColor, this.targetFadeColor, fadeProgress);
     let fadedPlayerTwoColor = lerpColor(playerTwo.playerColor, this.targetFadeColor, fadeProgress);
-    let keys = {};
-
 
     display.clear();
 
@@ -73,7 +71,6 @@ class Controller {
 
     switch (this.gameState) {
         case "PLAY":
-
             // Display golds and rocks with gradually fading colors
             golds.forEach(pos => {
                 display.setPixel(pos, fadedGoldColor);
@@ -131,7 +128,7 @@ class Controller {
             });
 
               // Check for collision between Player One and Player Two
-              if (playerOne.position === playerTwo.position) {
+            if (playerOne.position === playerTwo.position) {
                 if (!this.isHidden) {
                     // Record start time of flashing effect
                     this.flashStartTime = millis(); 
