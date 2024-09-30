@@ -72,13 +72,23 @@ class Controller {
     switch (this.gameState) {
         case "PLAY":
             // Display golds and rocks with gradually fading colors
-            // 不停的在画每一帧, 会把只设了一次的东西覆盖掉
-            // if (playerOne.miningCount == 0){
-            golds.forEach(pos => {
-                display.setPixel(pos, fadedGoldColor);
-            });
-          
-        
+            for (let i = 0; i <= golds.length; i++){
+                if(i == playerOne.whichGold()){
+                    if(playerOne.miningCount == 0){
+                        golds.forEach(pos => {
+                            display.setPixel(pos, fadedGoldColor);
+                        });
+                    }else if(playerOne.miningCount == 1){
+                        display.setPixel(golds[i], color(255, 208, 89)); 
+                    }else if(playerOne.miningCount == 2){
+                        display.setPixel(golds[i], color(255, 229, 163)); 
+                    }
+                }
+                else{
+                    display.setPixel(golds[i], fadedGoldColor);
+                }
+            }
+
             rocks.forEach(pos => {
                 display.setPixel(pos, fadedRockColor);
             });

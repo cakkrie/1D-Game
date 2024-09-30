@@ -25,7 +25,14 @@ class PlayerOne {
 
     } 
 
-    //main focus
+    whichGold(){
+        for (let i = 0; i < golds.length; i++) {
+            if (this.position === golds[i] - 1 || this.position === golds[i] + 1 || this.position === golds[i]) {
+                return i;
+            }
+    }
+}
+
     mineGold() {
         // 逻辑是用for loop去跑过1-6种array 看哪个位置的array是玩家附近的 找到那个位置了以后 在那个位置改变gold的颜色 所以for里的i就是之后gold里面的i
         // Check if player is at a position adjacent to any gold
@@ -33,28 +40,15 @@ class PlayerOne {
             if (this.position === golds[i] - 1 || this.position === golds[i] + 1 || this.position === golds[i]) {
                 if (key === 'B' || key === 'b') {
                     this.miningCount++; // Increment the mining count each time 'B' is pressed
-                }
-                if (this.miningCount === 1) {
-                    // First press: Change the color of the specific gold to a faded one (e.g., 70% brightness)
-                    display.setPixel(golds[i], color(255, 208, 89)); 
-                } else if (this.miningCount === 2) {
-                    // Second press: Change the color to even more faded (e.g., 30% brightness)
-                    display.setPixel(golds[i], color(255, 229, 163)); 
-                } else if (this.miningCount === 3) {
-                    // Third press: Mine the gold
-                    golds.splice(i, 1); // Remove the gold from the array after mining
-                    controller.score++; // Increment player score
-                    this.miningCount = 0; // Reset mining count for future mining
-                    this.minegoldcondition = true;
-                    break; 
-                    // Stop after mining the gold
-                // if (this.miningCount === 3) {
-                //     // Mine the gold and give one point
-                //     golds.splice(i, 1); // Remove the gold from the array
-                //     controller.score++;  // Increment the score
-                //     this.miningCount = 0; // Reset the mining count after successful mining
-                //     this.minegoldcondition = true;
-                //     break; // Exit loop after mining the gold
+                    if (this.miningCount === 3) {
+                        // Third press: Mine the gold
+                        golds.splice(i, 1); // Remove the gold from the array after mining
+                        controller.score++; // Increment player score
+                        this.miningCount = 0; // Reset mining count for future mining
+                        this.minegoldcondition = true;
+                        break; 
+                        // Stop after mining the gold
+                    }
                 }
             } else {
                 this.minegoldcondition = false;
