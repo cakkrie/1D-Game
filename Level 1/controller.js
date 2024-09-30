@@ -72,9 +72,26 @@ class Controller {
     switch (this.gameState) {
         case "PLAY":
             // Display golds and rocks with gradually fading colors
-            golds.forEach(pos => {
-                display.setPixel(pos, fadedGoldColor);
-            });
+            // 不停的在画每一帧, 会把只设了一次的东西覆盖掉
+            if (playerOne.miningCount == 0){
+                golds.forEach(pos => {
+                    display.setPixel(pos, fadedGoldColor);
+                });
+            } else if (playerOne.miningCount == 1){
+                console.log('dhfsj');
+                for (let i = 0; i < golds.length; i++) {
+                    if (this.position === golds[i] - 1 || this.position === golds[i] + 1 || this.position === golds[i]) {
+                        display.setPixel(golds[i], color(255, 208, 89)); 
+                        console.log(golds[i]);
+                    }
+                }
+            } else if (playerOne.miningCount == 2){
+                for (let i = 0; i < golds.length; i++) {
+                    if (this.position === golds[i] - 1 || this.position === golds[i] + 1 || this.position === golds[i]) {
+                        display.setPixel(golds[i], color(255, 229, 163)); 
+                    }
+                }
+            }
         
             rocks.forEach(pos => {
                 display.setPixel(pos, fadedRockColor);
@@ -94,7 +111,7 @@ class Controller {
 
             if (playerTwo.isExploding) {
                 playerTwo.explode();
-            }
+            }     
 
               // check if need to have new gold or rock
             if (currentTime - this.lastDropTime > 4000) {
@@ -106,8 +123,9 @@ class Controller {
                 }
 
                 if (golds.length < 6) {
-                    golds.push(newGoldPos);      
+                    golds.push(newGoldPos)
                 }
+
                 if (rocks.length < 6) {
                     rocks.push(newRockPos);
                 }
