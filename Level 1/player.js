@@ -24,30 +24,27 @@ class PlayerOne {
     } 
 
     mineGold() {
-        // Check if player is at a position adjacent to any gold
-        for (let i = 0; i < golds.length; i++) {
             if (this.position === golds[i] - 1 || this.position === golds[i] + 1 || this.position === golds[i]) {
                 if (key === 'B' || key === 'b') {
                     this.miningCount++; // Increment the mining count each time 'B' is pressed
-                }
-                // Fade the gold color based on how many times it's been pressed
-                if (this.miningCount === 1) {
-                    // First press: Change the color of the specific gold to a faded one (e.g., 70% brightness)
-                    display.setPixel(golds[i], color(255, 208, 89)); 
-                } else if (this.miningCount === 2) {
-                    // Second press: Change the color to even more faded (e.g., 30% brightness)
-                    display.setPixel(golds[i], color(255, 229, 163)); 
-                } else if (this.miningCount === 3) {
-                    // Third press: Mine the gold
-                    golds.splice(i, 1); // Remove the gold from the array after mining
-                    controller.score++; // Increment player score
-                    this.miningCount = 0; // Reset mining count for future mining
-                    this.minegoldcondition = true;
-                    break; // Stop after mining the gold
+                    // Fade the gold color based on how many times it's been pressed
+                    if (this.miningCount === 1) {
+                        // First press: Change the color of the specific gold to a faded one (e.g., 70% brightness)
+                        display.setPixel(golds[i], color(255, 208, 89));
+                    } else if (this.miningCount === 2) {
+                        // Second press: Change the color to even more faded (e.g., 30% brightness)
+                        display.setPixel(golds[i], color(255, 229, 163));
+                    } else if (this.miningCount === 3) {
+                        // Third press: Mine the gold
+                        golds.splice(i, 1); // Remove the gold from the array after mining
+                        controller.score++; // Increment player score
+                        this.miningCount = 0; // Reset mining count for future mining
+                        this.minegoldcondition = true;
+                    }
                 }
             } else {
                 this.minegoldcondition = false;
-            }
+            
         }
     }
 }

@@ -2,7 +2,6 @@ class Controller {
   constructor() {
       this.gameState = "PLAY";
       this.startTime = millis(); 
-      this.lastDropTime = 0;
       this.hideStartTime = 0;
       this.isHidden = false;
       this.flashStartTime = 0; 
@@ -14,11 +13,46 @@ class Controller {
       this.xPressCount = 0; // Count how many times 'x' is pressed
       this.targetFadeColor = color(235, 235, 235); // Color to fade
       this.fadeDuration =  10000; // 60 seconds in milliseconds
+      this.lastGoldDropTime = 0;   // Track time for gold drop
+      this.lastRockDropTime = 0;   // Track time for rock drop
+      this.dropInterval = 4000;  // Gold drops every 4 seconds (4000 ms)
+      this.rockDropDelay = 2000;   // Rock drops 2 seconds after gold
   }
 
   update() {
-
     let currentTime = millis();
+
+    if (currentTime - this.lastGoldDropTime >= this.dropInterval) {
+        // Generate new gold position
+        let newGoldPos = parseInt(random(0, displaySize));
+
+        // Ensure no more than 6 pieces of gold exist at once
+        if (golds.length < 6) {
+            golds.push(newGoldPos);  // Add new gold to the array
+        }
+
+        // Update the last gold drop time
+        this.lastGoldDropTime = currentTime;
+
+        // Schedule rock drop 2 seconds after gold
+        this.lastRockDropTime = currentTime + this.rockDropDelay;
+    }
+
+    // Check if it's time to drop rocks (2 seconds after gold)
+    if (currentTime>= this.lastRockDropTime) {
+        // Generate new rock position
+        let newRockPos = parseInt(random(0, displaySize));
+
+        // Ensure no more than 6 rocks exist at once
+        if (rocks.length < 6) {
+            rocks.push(newRockPos);  // Add new rock to the array
+        }
+
+        // Update the last rock drop time
+        this.lastRockDropTime = currentTime + this.dropInterval;  
+
+    }
+
     let elapsedTime = currentTime - this.startTime;
     let fadeProgress = constrain(elapsedTime / this.fadeDuration, 0, 0); // 0 to 1 over 60 seconds
 
@@ -37,57 +71,55 @@ class Controller {
         this.gameState = "SCORE"; // Go to SCORE state after flashing
     }
 
-      switch (this.gameState) {
-          case "PLAY":
+    switch (this.gameState) {
+        case "PLAY":
 
             // Display golds and rocks with gradually fading colors
-                golds.forEach(pos => {
-                    display.setPixel(pos, fadedGoldColor);
-                });
+            golds.forEach(pos => {
+                display.setPixel(pos, fadedGoldColor);
+            });
         
-                rocks.forEach(pos => {
-                     display.setPixel(pos, fadedRockColor);
-                });
+            rocks.forEach(pos => {
+                display.setPixel(pos, fadedRockColor);
+            });
                 
-              if (this.isHidden) {
-                  if (currentTime - this.hideStartTime >= 1000) {
+            if (this.isHidden) {
+                if (currentTime - this.hideStartTime >= 1000) {
                       this.isHidden = false;
-                  }
-              }
+                }
+            }
 
-              display.setPixel(playerTwo.position,fadedPlayerTwoColor);
+            display.setPixel(playerTwo.position,fadedPlayerTwoColor);
 
-              if (!this.isHidden) {
-                  display.setPixel(playerOne.position, fadedPlayerOneColor);
-              }
+            if (!this.isHidden) {
+                display.setPixel(playerOne.position, fadedPlayerOneColor);
+            }
 
-              if (playerTwo.isExploding) {
-                  playerTwo.explode();
-              }
+            if (playerTwo.isExploding) {
+                playerTwo.explode();
+            }
 
               // check if need to have new gold or rock
-              if (currentTime - this.lastDropTime > 4000) {
-                  let newGoldPos = parseInt(random(0, displaySize));
-                  let newRockPos = parseInt(random(0, displaySize));
+            if (currentTime - this.lastDropTime > 4000) {
+                let newGoldPos = parseInt(random(0, displaySize));
+                let newRockPos = parseInt(random(0, displaySize));
 
-                  while (abs(newGoldPos - newRockPos) < 3) {
-                      newRockPos = parseInt(random(0, displaySize));
-                  }
+                while (abs(newGoldPos - newRockPos) < 3) {
+                    newRockPos = parseInt(random(0, displaySize));
+                }
 
-                  if (golds.length < 6) {
-                      golds.push(newGoldPos);      
-                  }
-                  if (rocks.length < 6) {
-                      rocks.push(newRockPos);
-                  }
+                if (golds.length < 6) {
+                    golds.push(newGoldPos);      
+                }
+                if (rocks.length < 6) {
+                    rocks.push(newRockPos);
+                }
 
-                  this.lastDropTime = currentTime;
-              }
-
-
+                this.lastDropTime = currentTime;
+            }
 
               // Check if Player Two explodes a rock
-              rocks.forEach((rock, index) => {
+            rocks.forEach((rock, index) => {
                 if (playerTwo.isExploding) {
                     // Check if the explosion hits the rock
                     let rockPos = rock;
@@ -108,7 +140,6 @@ class Controller {
                     this.endGame(); // End game if Player One is not hidden
                 }
             }
-
             break;
 
             case "GAME_OVER":
