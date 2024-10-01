@@ -209,6 +209,8 @@ function keyPressed() {
   
     if (key == 'L' || key == 'l') {
         playerTwo.move(1);
+        // l 以后 开启一个statement
+        //按了 a 以后
     }
   
     if (key == 'H' || key == 'h') {
@@ -222,7 +224,8 @@ function keyPressed() {
   
     if (key == 'B' || key == 'b') {
         // Increment the press count and enable the feature after 3 presses
-        playerOne.mineGold()
+        playerOne.mineGold();
+        playerOne.startBlinking();
     }
   
     if (key == 'R' || key == 'r') {

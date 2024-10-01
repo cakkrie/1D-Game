@@ -1,13 +1,16 @@
 let golds = [];
 
 class PlayerOne {
-  
     constructor(_color, _position, _displaySize) {
-        this.playerColor = _color;
+        this.playerColor = color(127, 195, 198);
         this.position = _position;
         this.displaySize = _displaySize;
         this.miningCount = 0;
         this.minegoldcondition = false;
+        this.isBlinking = false;   
+        this.blinkInterval = null;
+        this.blinkSpeed = 200;   
+        this.blinkStartTime = 0; 
     }
 
     move(_direction) {
@@ -24,6 +27,45 @@ class PlayerOne {
         }
 
     } 
+
+    startBlinking() {
+        if (this.isBlinking) return; // If already blinking, don't start again.
+    
+        let originalColor = this.playerColor;  
+        let blinkColor = color(179, 241, 245); 
+        
+        this.isBlinking = true;
+        this.blinkStartTime = millis();
+        this.frameCount = 0;  // Initialize frame counter
+    
+        let frameDuration = 60;  // Assuming 60 FPS, adjust this based on your actual frame rate
+        let blinkFrames = frameDuration;  // 60 frames for 1 second of blinking
+        let flashSpeed = 10; // Flash every 20 frames (adjust this to change the flash speed)
+    
+        this.blinkInterval = setInterval(() => {
+            // Increment the frame counter
+            this.frameCount++;
+    
+            // Toggle between blink color and original color based on `flashSpeed`
+            if (this.frameCount % flashSpeed === 0) {
+                // Every `flashSpeed` frames, change color
+                if (this.playerColor === originalColor) {
+                    this.playerColor = blinkColor;
+                } else {
+                    this.playerColor = originalColor;
+                }
+            }
+    
+            // Stop blinking after `blinkFrames` frames (1 second at 60 FPS)
+            if (this.frameCount >= blinkFrames) {
+                clearInterval(this.blinkInterval);  // Stop blinking
+                this.playerColor = originalColor;   // Restore the original color
+                this.isBlinking = false;            // Reset blinking state
+            }
+        }, 1000 / frameDuration);  // Calculate the interval to simulate frame-based timing
+        return playerOneColor
+    }
+    
 
     whichGold(){
         for (let i = 0; i < golds.length; i++) {
@@ -58,9 +100,8 @@ class PlayerOne {
 }
 
 class PlayerTwo {
-
     constructor(_color, _position, _displaySize) {
-        this.playerColor = _color;
+        this.playerColor = color(234, 101, 101);
         this.position = _position;
         this.displaySize = _displaySize;
         this.isExploding = false; 

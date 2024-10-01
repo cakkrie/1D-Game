@@ -12,9 +12,8 @@ let rocks = [];
 
 function setup() {
     createCanvas((displaySize * pixelSize), pixelSize);
-
     controller = new Controller();
-    playerOne = new PlayerOne(color(127, 195, 198), parseInt(random(0, displaySize)), displaySize);
+    playerOne = new PlayerOne(PlayerOne.playerOneColor, parseInt(random(0, displaySize)), displaySize);
     playerTwo = new PlayerTwo(color(234, 101, 101), parseInt(random(0, displaySize)), displaySize);
     display = new Display(displaySize, pixelSize);
     
