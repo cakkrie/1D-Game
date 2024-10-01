@@ -43,6 +43,9 @@ function draw() {
         // This will handle flashing red effect
         display.show();
     }
+
+    playerOne.update();
+    playerTwo.update();
 }
 
 // Function to start the shake effect
@@ -54,19 +57,27 @@ function startShake() {
 // Modify the keyPressed function to trigger shaking on 'B'
 function keyPressed() {
     if (key == 'A' || key == 'a') {
-        playerOne.move(-1);
+        playerOne.state = "MOVE_LEFT";
+    }
+
+    if (key == 'S' || key == 's') {
+        playerOne.state = "DONT_MOVE";
     }
 
     if (key == 'D' || key == 'd') {
-        playerOne.move(1);
+        playerOne.state = "MOVE_RIGHT";
     }
 
     if (key == 'J' || key == 'j') {
-        playerTwo.move(-1);
+        playerTwo.state = "MOVE_LEFT";
+    }
+
+    if (key == 'K' || key == 'k') {
+        playerTwo.state = "DONT_MOVE";
     }
 
     if (key == 'L' || key == 'l') {
-        playerTwo.move(1);
+        playerTwo.state = "MOVE_RIGHT";
     }
 
     if (key == 'H' || key == 'h') {

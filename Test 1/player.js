@@ -1,4 +1,5 @@
 let golds = [];
+let moveInterval = 200;
 
 class PlayerOne {
     constructor(_color, _position, _displaySize) {
@@ -11,6 +12,8 @@ class PlayerOne {
         this.blinkInterval = null;
         this.blinkSpeed = 200;   
         this.blinkStartTime = 0; 
+        this.state = "DONT_MOVE"; //default state
+        this.lastMoveTime = 0; // Track the last move time
     }
 
     move(_direction) {
@@ -25,8 +28,31 @@ class PlayerOne {
         if (!rocks.includes(nextPosition)) {
             this.position = nextPosition;
         }
-
     } 
+
+    update() {
+        let currentTime = millis();
+            if (currentTime - this.lastMoveTime >= moveInterval) {
+            switch (this.state) {
+                case "MOVE_LEFT":  // Player One continuously moves left
+                    this.move(-1);
+                    break;
+
+                case "DONT_MOVE":  // Player One doesn't move
+                // No movement
+                    break;
+
+                case "MOVE_RIGHT":  // Player One continuously moves right
+                    this.move(1);
+                    break;
+
+                default:
+                    break;
+            }
+            this.lastMoveTime = currentTime;
+
+        }
+    }
 
     startBlinking() {
         if (this.isBlinking) return; // If already blinking, don't start again.
@@ -108,6 +134,8 @@ class PlayerTwo {
         this.explosionSize = 1;  // Default explosion size
         this.explosionStartTime = 0;  // Record explosion start time
         this.flashColor = false; // Used for flashing effect
+        this.state = "DONT_MOVE"; //default state
+        this.lastMoveTime = 0; // Track the last move time
     }
 
     move(_direction) {
@@ -124,6 +152,30 @@ class PlayerTwo {
         this.isExploding = true;
         this.explosionStartTime = millis();  // Set the start time of the explosion
         this.explosionSize = 1;              // Set initial explosion size
+    }
+
+    update() {
+        let currentTime = millis();
+            if (currentTime - this.lastMoveTime >= moveInterval) {
+            switch (this.state) {
+                case "MOVE_LEFT":  // Player One continuously moves left
+                    this.move(-1);
+                    break;
+
+                case "DONT_MOVE":  // Player One doesn't move
+                // No movement
+                    break;
+
+                case "MOVE_RIGHT":  // Player One continuously moves right
+                    this.move(1);
+                    break;
+
+                default:
+                    break;
+            }
+            this.lastMoveTime = currentTime;
+
+        }
     }
 
     explode() {

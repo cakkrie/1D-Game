@@ -17,10 +17,16 @@ class Controller {
         this.lastRockDropTime = 0;   // Track time for rock drop
         this.dropInterval = 4000;  // Gold drops every 4 seconds (4000 ms)
         this.rockDropDelay = 2000;   // Rock drops 2 seconds after gold
+        this.gameDuration = 60000;  // 60 seconds (in milliseconds)
     }
   
     update() {
       let currentTime = millis();
+
+      if (currentTime - this.startTime >= this.gameDuration) {
+        this.gameState = "SCORE";  // Switch to the GAME_OVER state
+        this.endGame();  // Call the function to handle the end of the game
+      }
   
       if (currentTime - this.lastGoldDropTime >= this.dropInterval) {
           // Generate new gold position
