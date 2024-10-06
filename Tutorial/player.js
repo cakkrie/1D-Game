@@ -17,6 +17,8 @@ class PlayerOne {
     }
 
     move(_direction) {
+        display.setPixel(this.position, color(BG, BG, BG));  // Reset the old position to the background color
+
         let nextPosition = this.position + _direction;
 
         if (nextPosition == -1) {
@@ -114,6 +116,9 @@ class PlayerOne {
                         controller.score++; // Increment player score
                         this.miningCount = 0; // Reset mining count for future mining
                         this.minegoldcondition = true;
+
+                        alert("Player One has mined the gold!");
+
                         break; 
                         // Stop after mining the gold
                     }
@@ -139,6 +144,8 @@ class PlayerTwo {
     }
 
     move(_direction) {
+        display.setPixel(this.position, color(BG, BG, BG));  // Reset the old position to the background color
+
         this.position = this.position + _direction;
 
         if (this.position == -1) {
@@ -203,15 +210,15 @@ class PlayerTwo {
             let leftPos = this.position - i;
             let rightPos = this.position + i;
 
+            display.setPixel(leftPos, explosionColor);
+            display.setPixel(rightPos, explosionColor);
+
             if (leftPos < 0) {
                 leftPos = this.displaySize - 1;
             }
             if (rightPos >= this.displaySize) {
                 rightPos = 0;
             }
-
-            display.setPixel(leftPos, explosionColor);
-            display.setPixel(rightPos, explosionColor);
 
             // Remove rocks at explosion positions
             rocks = rocks.filter(pos => pos !== leftPos && pos !== rightPos && pos !== this.position);
@@ -222,14 +229,16 @@ class PlayerTwo {
             // Check if explosion hits playerOne and let playerOne die once the explode hit it
             if (playerOne.position === leftPos || playerOne.position === rightPos || playerOne.position === this.position) {
                 controller.endGame();  // End game if PlayerOne hits the explosion
+                alert('DIED!!!!');
             }
         }
 
-        // End the explosion after 1.5 seconds
-        if (millis() - this.explosionStartTime > 1500) {
+        // End the explosion after 1 seconds
+        if (millis() - this.explosionStartTime > 1000) {
             this.isExploding = false;  // Stop the explosion
+            alert('Player Two is a bomb!');
         }
+
     }
 }
-
 

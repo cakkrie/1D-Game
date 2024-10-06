@@ -226,7 +226,7 @@ class PlayerTwo {
         }
 
         // End the explosion after 1.5 seconds
-        if (millis() - this.explosionStartTime > 1500) {
+        if (millis() - this.explosionStartTime > 1000) {
             this.isExploding = false;  // Stop the explosion
         }
     }

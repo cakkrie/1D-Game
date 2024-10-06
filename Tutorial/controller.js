@@ -21,82 +21,16 @@ class Controller {
     }
   
     update() {
-      let currentTime = millis();
+        let currentTime = millis();
 
-      if (currentTime - this.startTime >= this.gameDuration) {
-        this.gameState = "SCORE";  // Switch to the GAME_OVER state
-        this.endGame();  // Call the function to handle the end of the game
-      }
-  
-      if (currentTime - this.lastGoldDropTime >= this.dropInterval) {
-          // Generate new gold position
-          let newGoldPos = parseInt(random(0, displaySize));
-  
-          // Ensure no more than 6 pieces of gold exist at once
-          if (golds.length < 6) {
-              golds.push(newGoldPos);  // Add new gold to the array
-          }
-  
-          // Update the last gold drop time
-          this.lastGoldDropTime = currentTime;
-  
-          // Schedule rock drop 2 seconds after gold
-          this.lastRockDropTime = currentTime + this.rockDropDelay;
-      }
-  
-      // Check if it's time to drop rocks (2 seconds after gold)
-      if (currentTime>= this.lastRockDropTime) {
-          // Generate new rock position
-          let newRockPos = parseInt(random(0, displaySize));
-  
-          // Ensure no more than 6 rocks exist at once
-          if (rocks.length < 6) {
-              rocks.push(newRockPos);  // Add new rock to the array
-          }
-  
-          // Update the last rock drop time
-          this.lastRockDropTime = currentTime + this.dropInterval;  
-  
-      }
-  
-      let elapsedTime = currentTime - this.startTime;
-      let fadeProgress = constrain(elapsedTime / this.fadeDuration, 0, 0); // 0 to 1 over 60 seconds
-  
-      // Gradually fade each color to the target fade color
-      let fadedGoldColor = lerpColor(this.goldColor, this.targetFadeColor, fadeProgress);
-      let fadedRockColor = lerpColor(this.rockColor, this.targetFadeColor, fadeProgress);
-      let fadedPlayerOneColor = lerpColor(playerOne.playerColor, this.targetFadeColor, fadeProgress);
-      let fadedPlayerTwoColor = lerpColor(playerTwo.playerColor, this.targetFadeColor, fadeProgress);
-  
-      display.clear();
-  
-      // Check if the colors have fully faded (i.e., fadeProgress reaches 1)
-      if (fadeProgress >= 0.8) {
-          this.gameState = "SCORE"; // Go to SCORE state after flashing
-      }
-  
       switch (this.gameState) {
           case "PLAY":
-              // Display golds and rocks with gradually fading colors
-              for (let i = 0; i <= golds.length; i++){
-                  if(i == playerOne.whichGold()){
-                      if(playerOne.miningCount == 0){
-                          golds.forEach(pos => {
-                              display.setPixel(pos, fadedGoldColor);
-                          });
-                      }else if(playerOne.miningCount == 1){
-                          display.setPixel(golds[i], color(255, 208, 89)); 
-                      }else if(playerOne.miningCount == 2){
-                          display.setPixel(golds[i], color(255, 229, 163)); 
-                      }
-                  }
-                  else{
-                      display.setPixel(golds[i], fadedGoldColor);
-                  }
-              }
-  
               rocks.forEach(pos => {
-                  display.setPixel(pos, fadedRockColor);
+                  display.setPixel(pos, this.rockColor);
+              });
+
+              golds.forEach(pos => {
+                display.setPixel(pos, this.goldColor);
               });
                   
               if (this.isHidden) {
@@ -105,15 +39,18 @@ class Controller {
                   }
               }
   
-              display.setPixel(playerTwo.position,fadedPlayerTwoColor);
+              display.setPixel(playerTwo.position,color(234, 101, 101));
   
               if (!this.isHidden) {
-                  display.setPixel(playerOne.position, fadedPlayerOneColor);
+                  display.setPixel(playerOne.position, color(127, 195, 198));
               }
   
               if (playerTwo.isExploding) {
                   playerTwo.explode();
-              }     
+              }
+              
+              playerOne.update();
+              playerTwo.update();
   
                 // check if need to have new gold or rock
               if (currentTime - this.lastDropTime > 4000) {
@@ -135,17 +72,17 @@ class Controller {
                   this.lastDropTime = currentTime;
               }
   
-                // Check if Player Two explodes a rock
-              rocks.forEach((rock, index) => {
-                  if (playerTwo.isExploding) {
-                      // Check if the explosion hits the rock
-                      let rockPos = rock;
-                      if (playerTwo.position === rockPos) {
-                          rocks.splice(index, 1); // Remove rock
-                          this.score++; // Increment score for Player Two exploding a rock
-                      }
-                  }
-              });
+                // // Check if Player Two explodes a rock
+                // rocks.forEach((rock, index) => {
+                //     if (playerTwo.isExploding) {
+                //         // Check if the explosion hits the rock
+                //         let rockPos = rock;
+                //         if (playerTwo.position === rockPos) {
+                //             rocks.splice(index, 1); // Remove rock
+                //             alert('Player Two has removed the rock!');
+                //         }
+                //     }
+                // });
   
                 // Check for collision between Player One and Player Two
               if (playerOne.position === playerTwo.position) {
@@ -153,7 +90,6 @@ class Controller {
                       // Record start time of flashing effect
                       this.flashStartTime = millis(); 
                       this.gameState = "GAME_OVER"; 
-  
                       this.endGame(); // End game if Player One is not hidden
                   }
               }
@@ -167,18 +103,7 @@ class Controller {
                     let lerpValue = (flashTime % 500) / 500; // Flash on and off every 500 ms
                     let flashingColor = lerpColor(this.flashColor, color(BG, BG, BG), lerpValue);
                     display.setAllPixels(flashingColor); // Flash red
-                } else {
-                    this.gameState = "SCORE"; // Go to SCORE state after flashing
-                }
-              break;
-  
-              case "SCORE":
-              let scorePos = 0;
-              // Display the combined score as a series of blocks
-              for (let i = 0; i < this.score; i++) {
-                  display.setPixel(scorePos, this.goldColor);
-                  scorePos += 2; // Move to the next pixel locationa
-          }
+                } 
           break;
         }
     }

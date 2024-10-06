@@ -13,14 +13,28 @@ let isShaking = false;  // Track whether the shake is happening
 let shakeStartFrame = 0; // Record when the shake started
 
 function setup() {
+    
     createCanvas((displaySize * pixelSize), pixelSize);
     controller = new Controller();
-    playerOne = new PlayerOne(PlayerOne.playerOneColor, parseInt(random(0, displaySize)), displaySize);
+    playerOne = new PlayerOne(color(127, 195, 198), parseInt(random(0, displaySize)), displaySize);
     playerTwo = new PlayerTwo(color(234, 101, 101), parseInt(random(0, displaySize)), displaySize);
     display = new Display(displaySize, pixelSize);
+
+    // Drop one gold and one stone at the beginning of the game
+    let goldPos = parseInt(random(0, displaySize));
+    let rockPos = parseInt(random(0, displaySize));
+    
+        // Ensure they don't overlap
+    while (abs(goldPos - rockPos) < 3) {
+        rockPos = parseInt(random(0, displaySize));
+    }
+        // Add the gold and rock to their respective arrays
+    golds.push(goldPos);
+    rocks.push(rockPos);
 }
 
 function draw() {
+
     if (isShaking) {
         // Calculate random shake offsets (between -5 and 5 pixels)
         let shakeX = random(-5, 5);

@@ -18,6 +18,7 @@ class Controller {
         this.dropInterval = 4000;  // Gold drops every 4 seconds (4000 ms)
         this.rockDropDelay = 2000;   // Rock drops 2 seconds after gold
         this.gameDuration = 60000;  // 60 seconds (in milliseconds)
+        this.oPressCount = 0;
     }
   
     update() {
@@ -47,6 +48,7 @@ class Controller {
       // Check if it's time to drop rocks (2 seconds after gold)
       if (currentTime>= this.lastRockDropTime) {
           // Generate new rock position
+          
           let newRockPos = parseInt(random(0, displaySize));
   
           // Ensure no more than 6 rocks exist at once
@@ -181,6 +183,11 @@ class Controller {
           }
           break;
         }
+
+        if (this.oPressCount >= 3){
+            this.triggerExplosionAndRestart();
+            this.oPressCount = 0;
+        }
     }
   
       endGame() {
@@ -191,10 +198,20 @@ class Controller {
           rocks = []; // Clear rocks
           this.hideStartTime = millis(); // Optionally reset hide start time if needed
       }
+
+      triggerExplosionAndRestart(){
+        playerTwo.startExplosion();
+
+        setTimeout(() => {
+            this.gameState = "GAME_OVER";
+        }, 1500);
+      }
   
       restartGame() {
-          this.gameState = "PLAY"; // Set game state to PLAY
-          this.endGame(); // Reset game state and positions
+        this.gameState = "GAME_OVER";
+        console.log(this.gameState);
+        this.gameState = "PLAY"; // Set game state to PLAY
+        this.endGame(); // Reset game state and positions
       }
   }
   

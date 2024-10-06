@@ -12,6 +12,10 @@ let shakeDuration = 30; // Duration of the shake in frames
 let isShaking = false;  // Track whether the shake is happening
 let shakeStartFrame = 0; // Record when the shake started
 
+let oFirstPressTime = 0; 
+let oPressTimeLimit = 1500;
+let isTimerActive = false;    // Track if the timer is active
+
 function setup() {
     createCanvas((displaySize * pixelSize), pixelSize);
     controller = new Controller();
@@ -46,6 +50,7 @@ function draw() {
 
     playerOne.update();
     playerTwo.update();
+
 }
 
 // Function to start the shake effect
@@ -86,18 +91,31 @@ function keyPressed() {
     }
 
     if (key == 'O' || key == 'o') {
-        playerTwo.startExplosion(); 
+        oFirstPressTime = millis();
+        console.log(controller.oPressCount);
+
+        controller.oPressCount++;
+        if (controller.oPressCount == 1){
+            playerTwo.startExplosion(); 
+            console.log(controller.oPressCount);
+        } else if (controller.oPressCount >= 3 && millis() - oFirstPressTime <= 1500){
+            controller.gameState = "GAME_OVER";
+            createCanvas((displaySize * pixelSize), pixelSize);
+            controller = new Controller();
+            playerOne = new PlayerOne(PlayerOne.playerOneColor, parseInt(random(0, displaySize)), displaySize);
+            playerTwo = new PlayerTwo(color(234, 101, 101), parseInt(random(0, displaySize)), displaySize);
+            display = new Display(displaySize, pixelSize);
+            controller.gameState = "PLAY";
+            golds = []; // Clear golds
+            rocks = []; // Clear rocks
+            controller.oPressCount == 0;
+            oFirstPressTime = 0;
+            console.log(controller.oPressCount);
+        }
     }
 
     if (key == 'B' || key == 'b') {
         playerOne.mineGold();
         startShake();  // Start the shake effect when 'B' is pressed
-    }
-
-    if (key == 'R' || key == 'r') {
-        if (controller.gameState === "GAME_OVER") {
-            controller.restartGame(); 
-        }
-        controller.restartGame(); 
     }
 }
