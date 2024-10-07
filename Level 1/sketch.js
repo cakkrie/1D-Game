@@ -91,15 +91,33 @@ function keyPressed() {
     }
 
     if (key == 'O' || key == 'o') {
-        oFirstPressTime = millis();
+        if (controller.oPressCount == 0) {
+            oFirstPressTime = millis(); // Set time only on first press
+        }
+    
+        if (millis() - oFirstPressTime > 800) {
+            // Reset if more than 800ms have passed since first press
+            controller.oPressCount = 0;
+            oFirstPressTime = millis(); // Reset time to the new press
+        }
+    
         console.log(controller.oPressCount);
-
         controller.oPressCount++;
-        if (controller.oPressCount == 1){
-            playerTwo.startExplosion(); 
-            console.log(controller.oPressCount);
-        } else if (controller.oPressCount >= 3 && millis() - oFirstPressTime <= 1500){
-            controller.gameState = "GAME_OVER";
+    
+        if (controller.oPressCount == 1 || controller.oPressCount == 2) {
+            playerTwo.startExplosion();
+        }
+    
+        if (controller.oPressCount >= 3 && millis() - oFirstPressTime <= 800) {
+            // Restart the game logic
+            let flashTime = controller.currentTime - controller.flashStartTime;
+            if (flashTime < controller.flashDuration) {
+                // Calculate the flashing color
+                let lerpValue = (flashTime % 500) / 500; // Flash on and off every 500 ms
+                let flashingColor = lerpColor(controller.flashColor, color(BG, BG, BG), lerpValue);
+                display.setAllPixels(flashingColor); // Flash red
+            }
+
             createCanvas((displaySize * pixelSize), pixelSize);
             controller = new Controller();
             playerOne = new PlayerOne(PlayerOne.playerOneColor, parseInt(random(0, displaySize)), displaySize);
@@ -108,11 +126,11 @@ function keyPressed() {
             controller.gameState = "PLAY";
             golds = []; // Clear golds
             rocks = []; // Clear rocks
-            controller.oPressCount == 0;
+            controller.oPressCount = 0;
             oFirstPressTime = 0;
-            console.log(controller.oPressCount);
         }
     }
+    
 
     if (key == 'B' || key == 'b') {
         playerOne.mineGold();

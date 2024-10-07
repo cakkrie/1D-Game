@@ -25,6 +25,8 @@ class Controller {
 
       switch (this.gameState) {
           case "PLAY":
+
+
               rocks.forEach(pos => {
                   display.setPixel(pos, this.rockColor);
               });
